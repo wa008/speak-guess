@@ -9,9 +9,9 @@ const Game = {
 
   // 游戏状态
   state: {
-    view: 'home',         // home | category | difficulty | duration | playing | result
+    view: 'home',         // home | setup | playing | result
     selectedCats: [],      // 选中的类别
-    difficulty: 'all',     // 难度 easy | hard | all
+    difficulty: 'all',     // 难度 easy | medium | hard | all
     durationIdx: 0,        // 时长索引
     pool: [],              // 当前词池 (shuffled)
     poolIndex: 0,          // 当前词索引
@@ -37,44 +37,55 @@ const Game = {
     document.querySelectorAll('.view').forEach(el => {
       el.classList.toggle('active', el.id === 'view-' + name);
     });
-    if (name === 'category') this.renderCategories();
-    if (name === 'duration') this.renderDurations();
+    if (name === 'setup') this.renderSetup();
     if (name === 'result') this.renderResult();
   },
 
   // 绑定事件
   bindEvents() {
     // 首页
-    document.getElementById('btn-start').addEventListener('click', () => this.showView('category'));
+    document.getElementById('btn-start').addEventListener('click', () => this.showView('setup'));
     document.getElementById('btn-reset').addEventListener('click', () => this.handleReset());
 
-    // 类别页
-    document.getElementById('btn-cat-next').addEventListener('click', () => this.onCategoryNext());
-    document.getElementById('btn-cat-back').addEventListener('click', () => this.showView('home'));
+    // 设置页
+    document.getElementById('btn-setup-back').addEventListener('click', () => this.showView('home'));
+    document.getElementById('btn-setup-start').addEventListener('click', () => this.startGame());
 
-    // 难度页
-    document.getElementById('btn-diff-back').addEventListener('click', () => this.showView('category'));
-    document.querySelectorAll('#diff-grid .dur-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        this.state.difficulty = e.currentTarget.dataset.diff;
-        this.showView('duration');
+    // 设置页 - 难度选择
+    document.querySelectorAll('#diff-group .pill-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('#diff-group .pill-btn').forEach(b => b.classList.remove('selected'));
+        e.target.classList.add('selected');
+        this.state.difficulty = e.target.dataset.diff;
       });
     });
 
-    // 时长页
-    document.getElementById('btn-dur-back').addEventListener('click', () => this.showView('difficulty'));
+    // 设置页 - 时长选择
+    document.querySelectorAll('#dur-group .pill-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('#dur-group .pill-btn').forEach(b => b.classList.remove('selected'));
+        e.target.classList.add('selected');
+        this.state.durationIdx = parseInt(e.target.dataset.idx, 10);
+      });
+    });
 
     // 游戏页
     document.getElementById('btn-correct').addEventListener('click', () => this.onCorrect());
     document.getElementById('btn-skip').addEventListener('click', () => this.onSkip());
+    document.getElementById('btn-exit').addEventListener('click', () => {
+      if (confirm('确定要退出当前游戏吗？进度将不会保存。')) {
+        this.endGame(true);
+      }
+    });
 
     // 结算页
-    document.getElementById('btn-again').addEventListener('click', () => this.showView('category'));
+    document.getElementById('btn-result-back').addEventListener('click', () => this.showView('setup'));
+    document.getElementById('btn-again').addEventListener('click', () => this.startGame());
     document.getElementById('btn-home').addEventListener('click', () => this.showView('home'));
   },
 
-  // 渲染类别选择
-  renderCategories() {
+  // 渲染设置页
+  renderSetup() {
     const grid = document.getElementById('cat-grid');
     grid.innerHTML = '';
     const availableCats = [];
@@ -117,12 +128,12 @@ const Game = {
       randomCard.addEventListener('click', () => {
          // 包含所有的类别
          this.state.selectedCats = [...availableCats];
-         this.renderCategories(); // 重新渲染以高亮所有选中的类别
+         this.renderSetup(); // 重新渲染以高亮所有选中的类别
       });
       grid.appendChild(randomCard);
     }
 
-    this.updateCatNextBtn();
+    this.updateStartBtn();
   },
 
   toggleCategory(key, card) {
@@ -134,39 +145,17 @@ const Game = {
       this.state.selectedCats.push(key);
       card.classList.add('selected');
     }
-    this.updateCatNextBtn();
+    this.updateStartBtn();
   },
 
-  updateCatNextBtn() {
-    const btn = document.getElementById('btn-cat-next');
+  updateStartBtn() {
+    const btn = document.getElementById('btn-setup-start');
     btn.disabled = this.state.selectedCats.length === 0;
   },
 
-  onCategoryNext() {
-    if (this.state.selectedCats.length === 0) return;
-    this.showView('difficulty');
-  },
-
-  // 渲染时长选择
-  renderDurations() {
-    const grid = document.getElementById('dur-grid');
-    grid.innerHTML = '';
-
-    this.DURATIONS.forEach((d, idx) => {
-      const card = document.createElement('div');
-      card.className = 'dur-card';
-      card.innerHTML = `
-        <span class="dur-time">${d.label}</span>
-        <span class="dur-detail">可跳过 ${d.skips} 次 · 目标 ${d.threshold} 词</span>
-      `;
-      card.addEventListener('click', () => this.startGame(idx));
-      grid.appendChild(card);
-    });
-  },
-
   // 开始游戏
-  startGame(durationIdx) {
-    const dur = this.DURATIONS[durationIdx];
+  startGame() {
+    const dur = this.DURATIONS[this.state.durationIdx];
     const pool = Storage.getAvailablePool(this.state.selectedCats, this.state.difficulty);
 
     if (pool.length === 0) {
@@ -177,7 +166,6 @@ const Game = {
     // 洗牌
     this.shuffle(pool);
 
-    this.state.durationIdx = durationIdx;
     this.state.pool = pool;
     this.state.poolIndex = 0;
     this.state.timeLeft = dur.seconds;
@@ -271,11 +259,17 @@ const Game = {
     }
   },
 
-  // 结束游戏
-  endGame() {
-    clearInterval(this.state.timer);
-    this.state.timer = null;
-    this.showView('result');
+  // 结束游戏 (abort=true 表示中途退出)
+  endGame(abort = false) {
+    if (this.state.timer) {
+      clearInterval(this.state.timer);
+      this.state.timer = null;
+    }
+    if (abort) {
+      this.showView('setup');
+    } else {
+      this.showView('result');
+    }
   },
 
   // 渲染结算

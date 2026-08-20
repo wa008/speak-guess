@@ -517,3 +517,56 @@ body {
     padding-bottom: calc(24px + env(safe-area-inset-bottom));
   }
 }
+
+/* --- Setup View --- */
+.setup-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+}
+.setup-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+.setup-title {
+  color: #fff;
+  font-size: 1rem;
+  margin: 20px 0 12px;
+  opacity: 0.9;
+}
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pill-btn {
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.2);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  flex: 1;
+  min-width: 60px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pill-btn.selected {
+  background: #fff;
+  color: #667eea;
+  border-color: #fff;
+  font-weight: bold;
+}
+.game-header-top {
+  margin-bottom: 12px;
+}
+#btn-exit {
+  width: auto;
+  padding: 0 12px;
+  height: 36px;
+  font-size: 0.85rem;
+}

@@ -24,69 +24,50 @@
     </div>
   </section>
 
-  <!-- 选类别 -->
-  <section id="view-category" class="view">
-    <div class="container">
+  <!-- 设置页 (整合类别、难度、时长) -->
+  <section id="view-setup" class="view">
+    <div class="container setup-container">
       <div class="page-header">
-        <button id="btn-cat-back" class="btn btn-icon">←</button>
-        <h2>选择类别</h2>
+        <button id="btn-setup-back" class="btn btn-icon">←</button>
+        <h2>游戏设置</h2>
         <span></span>
       </div>
-      <p class="hint">可多选，混合出题</p>
-      <div id="cat-grid" class="cat-grid"></div>
+      
+      <div class="setup-scroll-area">
+        <!-- 类别 -->
+        <h3 class="setup-title">1. 选择类别 (可多选)</h3>
+        <div id="cat-grid" class="cat-grid"></div>
+
+        <!-- 难度 -->
+        <h3 class="setup-title">2. 选择难度</h3>
+        <div id="diff-group" class="pill-group">
+          <button class="pill-btn" data-diff="easy">简单</button>
+          <button class="pill-btn" data-diff="medium">中等</button>
+          <button class="pill-btn" data-diff="hard">困难</button>
+          <button class="pill-btn selected" data-diff="all">混合</button>
+        </div>
+
+        <!-- 时长 -->
+        <h3 class="setup-title">3. 选择时长</h3>
+        <div id="dur-group" class="pill-group">
+          <button class="pill-btn selected" data-idx="0">2分钟</button>
+          <button class="pill-btn" data-idx="1">3分钟</button>
+          <button class="pill-btn" data-idx="2">5分钟</button>
+        </div>
+      </div>
+
       <div class="page-footer">
-        <button id="btn-cat-next" class="btn btn-primary btn-lg" disabled>下一步</button>
+        <button id="btn-setup-start" class="btn btn-primary btn-lg" disabled>开始游戏</button>
       </div>
-    </div>
-  </section>
-
-  
-  <!-- 选难度 -->
-  <section id="view-difficulty" class="view">
-    <div class="container">
-      <div class="page-header">
-        <button id="btn-diff-back" class="btn btn-icon">←</button>
-        <h2>选择难度</h2>
-        <span></span>
-      </div>
-      <p class="hint">难度越高，词语越抽象生僻</p>
-      <div id="diff-grid" class="dur-grid">
-        <div class="dur-card" data-diff="easy">
-          <span class="dur-time">✅ 简单</span>
-          <span class="dur-detail">常见高频词，轻松愉快</span>
-        </div>
-        <div class="dur-card" data-diff="medium">
-          <span class="dur-time">🌟 中等</span>
-          <span class="dur-detail">进阶词汇，考验一定默契</span>
-        </div>
-        <div class="dur-card" data-diff="hard">
-          <span class="dur-time">🔥 困难</span>
-          <span class="dur-detail">生僻词与抽象概念，终极挑战</span>
-        </div>
-        <div class="dur-card" data-diff="all">
-          <span class="dur-time">🔀 随机混合</span>
-          <span class="dur-detail">各难度随机出现</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 选时长 -->
-  <section id="view-duration" class="view">
-    <div class="container">
-      <div class="page-header">
-        <button id="btn-dur-back" class="btn btn-icon">←</button>
-        <h2>选择时长</h2>
-        <span></span>
-      </div>
-      <p class="hint">时间越长，目标越高</p>
-      <div id="dur-grid" class="dur-grid"></div>
     </div>
   </section>
 
   <!-- 游戏中 -->
   <section id="view-playing" class="view">
     <div class="container game-container">
+      <div class="game-header-top">
+        <button id="btn-exit" class="btn btn-icon btn-sm">← 退出</button>
+      </div>
       <div class="game-top">
         <div class="timer-wrap">
           <div class="timer-bar-bg">
@@ -118,7 +99,13 @@
   <!-- 结算 -->
   <section id="view-result" class="view">
     <div class="container">
-      <div id="result-badge" class="result-badge pass">🎉 达标！</div>
+      <div class="page-header">
+        <button id="btn-result-back" class="btn btn-icon">←</button>
+        <h2>结算</h2>
+        <span></span>
+      </div>
+
+      <div id="result-badge" class="result-badge pass" style="margin-top: 16px;">🎉 达标！</div>
 
       <div class="result-stats">
         <div class="result-stat">
@@ -146,7 +133,7 @@
       </div>
 
       <div class="result-actions">
-        <button id="btn-again" class="btn btn-primary btn-lg">再来一局</button>
+        <button id="btn-again" class="btn btn-primary btn-lg">再来一局 (同设置)</button>
         <button id="btn-home" class="btn btn-ghost">返回首页</button>
       </div>
     </div>
