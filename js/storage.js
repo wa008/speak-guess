@@ -25,6 +25,7 @@ const Storage = {
     if (!catData) return [];
     let words = [];
     if (difficulty === 'easy' || difficulty === 'all') words = words.concat(catData.easy || []);
+    if (difficulty === 'medium' || difficulty === 'all') words = words.concat(catData.medium || []);
     if (difficulty === 'hard' || difficulty === 'all') words = words.concat(catData.hard || []);
     // Fallback for old format
     if (catData.words && (difficulty === 'all' || difficulty === 'easy')) words = words.concat(catData.words);
