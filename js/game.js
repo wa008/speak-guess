@@ -77,12 +77,15 @@ const Game = {
   renderCategories() {
     const grid = document.getElementById('cat-grid');
     grid.innerHTML = '';
+    const availableCats = [];
 
     Object.keys(WORD_BANK).forEach(key => {
       const cat = WORD_BANK[key];
       const remaining = Storage.getRemainingCount(key, 'all');
       const total = Storage.getTotalCount(key, 'all');
       const exhausted = remaining === 0;
+
+      if (!exhausted) availableCats.push(key);
 
       const card = document.createElement('div');
       card.className = 'cat-card' + (this.state.selectedCats.includes(key) ? ' selected' : '') + (exhausted ? ' exhausted' : '');
@@ -99,6 +102,28 @@ const Game = {
 
       grid.appendChild(card);
     });
+
+    // 添加“随机”选项
+    if (availableCats.length > 0) {
+      const randomCard = document.createElement('div');
+      randomCard.className = 'cat-card';
+      randomCard.style.borderStyle = 'dashed';
+      randomCard.style.borderColor = 'rgba(255,255,255,0.6)';
+      randomCard.innerHTML = `
+        <span class="cat-icon">🎲</span>
+        <span class="cat-name">随机</span>
+        <span class="cat-count">帮你选</span>
+      `;
+      randomCard.addEventListener('click', () => {
+         // 随机挑选 2-4 个类别
+         const pickCount = Math.min(availableCats.length, Math.floor(Math.random() * 3) + 2);
+         const shuffled = [...availableCats];
+         this.shuffle(shuffled);
+         this.state.selectedCats = shuffled.slice(0, pickCount);
+         this.renderCategories(); // 重新渲染以高亮选中的类别
+      });
+      grid.appendChild(randomCard);
+    }
 
     this.updateCatNextBtn();
   },
