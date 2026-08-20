@@ -2,9 +2,9 @@
 const Game = {
   // 时长配置：时长(秒)、可跳过次数、及格阈值
   DURATIONS: [
+    { seconds: 120, label: '2 分钟', skips: 4, threshold: 5 },
     { seconds: 180, label: '3 分钟', skips: 6, threshold: 8 },
     { seconds: 300, label: '5 分钟', skips: 10, threshold: 14 },
-    { seconds: 480, label: '8 分钟', skips: 16, threshold: 22 },
   ],
 
   // 游戏状态
