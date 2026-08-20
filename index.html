@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
+  <title>你说我猜</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- 首页 -->
+  <section id="view-home" class="view active">
+    <div class="container">
+      <div class="home-content">
+        <h1 class="title">🎉 你说我猜</h1>
+        <p class="subtitle">选词 · 描述 · 猜词 · 开心</p>
+        <button id="btn-start" class="btn btn-primary btn-lg">开始游戏</button>
+        <div class="home-footer">
+          <span id="total-remaining" class="info-text"></span>
+          <button id="btn-reset" class="btn btn-ghost btn-sm">🔄 重置词库</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 选类别 -->
+  <section id="view-category" class="view">
+    <div class="container">
+      <div class="page-header">
+        <button id="btn-cat-back" class="btn btn-icon">←</button>
+        <h2>选择类别</h2>
+        <span></span>
+      </div>
+      <p class="hint">可多选，混合出题</p>
+      <div id="cat-grid" class="cat-grid"></div>
+      <div class="page-footer">
+        <button id="btn-cat-next" class="btn btn-primary btn-lg" disabled>下一步</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 选时长 -->
+  <section id="view-duration" class="view">
+    <div class="container">
+      <div class="page-header">
+        <button id="btn-dur-back" class="btn btn-icon">←</button>
+        <h2>选择时长</h2>
+        <span></span>
+      </div>
+      <p class="hint">时间越长，目标越高</p>
+      <div id="dur-grid" class="dur-grid"></div>
+    </div>
+  </section>
+
+  <!-- 游戏中 -->
+  <section id="view-playing" class="view">
+    <div class="container game-container">
+      <div class="game-top">
+        <div class="timer-wrap">
+          <div class="timer-bar-bg">
+            <div id="timer-bar" class="timer-bar"></div>
+          </div>
+          <span id="timer-text" class="timer-text">0:00</span>
+        </div>
+        <div class="game-stats">
+          <span class="stat">✅ <span id="score-display">0</span></span>
+        </div>
+      </div>
+
+      <div class="word-area">
+        <div id="word-category" class="word-category-label"></div>
+        <div id="current-word" class="current-word">准备</div>
+      </div>
+
+      <div class="game-actions">
+        <button id="btn-skip" class="btn btn-skip">
+          ⏭️ 跳过 (<span class="skip-count">2</span>)
+        </button>
+        <button id="btn-correct" class="btn btn-correct">
+          ✅ 猜对了！
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 结算 -->
+  <section id="view-result" class="view">
+    <div class="container">
+      <div id="result-badge" class="result-badge pass">🎉 达标！</div>
+
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="stat-num" id="result-correct">0</div>
+          <div class="stat-label">猜对</div>
+        </div>
+        <div class="result-stat">
+          <div class="stat-num" id="result-skipped">0</div>
+          <div class="stat-label">跳过</div>
+        </div>
+        <div class="result-stat">
+          <div class="stat-num" id="result-threshold">0</div>
+          <div class="stat-label">目标</div>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <h3>✅ 猜对的词</h3>
+        <div id="result-words" class="result-word-list"></div>
+      </div>
+
+      <div id="skipped-section" class="result-section" style="display:none">
+        <h3>⏭️ 跳过的词</h3>
+        <div id="result-skipped-words" class="result-word-list"></div>
+      </div>
+
+      <div class="result-actions">
+        <button id="btn-again" class="btn btn-primary btn-lg">再来一局</button>
+        <button id="btn-home" class="btn btn-ghost">返回首页</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/words.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
