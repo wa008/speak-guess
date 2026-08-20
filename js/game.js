@@ -2,15 +2,16 @@
 const Game = {
   // 时长配置：时长(秒)、可跳过次数、及格阈值
   DURATIONS: [
-    { seconds: 180, label: '3 分钟', skips: 2, threshold: 8 },
-    { seconds: 300, label: '5 分钟', skips: 2, threshold: 14 },
-    { seconds: 480, label: '8 分钟', skips: 2, threshold: 22 },
+    { seconds: 180, label: '3 分钟', skips: 6, threshold: 8 },
+    { seconds: 300, label: '5 分钟', skips: 10, threshold: 14 },
+    { seconds: 480, label: '8 分钟', skips: 16, threshold: 22 },
   ],
 
   // 游戏状态
   state: {
-    view: 'home',         // home | category | duration | playing | result
+    view: 'home',         // home | category | difficulty | duration | playing | result
     selectedCats: [],      // 选中的类别
+    difficulty: 'all',     // 难度 easy | hard | all
     durationIdx: 0,        // 时长索引
     pool: [],              // 当前词池 (shuffled)
     poolIndex: 0,          // 当前词索引
@@ -51,8 +52,17 @@ const Game = {
     document.getElementById('btn-cat-next').addEventListener('click', () => this.onCategoryNext());
     document.getElementById('btn-cat-back').addEventListener('click', () => this.showView('home'));
 
+    // 难度页
+    document.getElementById('btn-diff-back').addEventListener('click', () => this.showView('category'));
+    document.querySelectorAll('#diff-grid .dur-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        this.state.difficulty = e.currentTarget.dataset.diff;
+        this.showView('duration');
+      });
+    });
+
     // 时长页
-    document.getElementById('btn-dur-back').addEventListener('click', () => this.showView('category'));
+    document.getElementById('btn-dur-back').addEventListener('click', () => this.showView('difficulty'));
 
     // 游戏页
     document.getElementById('btn-correct').addEventListener('click', () => this.onCorrect());
@@ -70,8 +80,8 @@ const Game = {
 
     Object.keys(WORD_BANK).forEach(key => {
       const cat = WORD_BANK[key];
-      const remaining = Storage.getRemainingCount(key);
-      const total = Storage.getTotalCount(key);
+      const remaining = Storage.getRemainingCount(key, 'all');
+      const total = Storage.getTotalCount(key, 'all');
       const exhausted = remaining === 0;
 
       const card = document.createElement('div');
@@ -112,7 +122,7 @@ const Game = {
 
   onCategoryNext() {
     if (this.state.selectedCats.length === 0) return;
-    this.showView('duration');
+    this.showView('difficulty');
   },
 
   // 渲染时长选择
@@ -135,10 +145,10 @@ const Game = {
   // 开始游戏
   startGame(durationIdx) {
     const dur = this.DURATIONS[durationIdx];
-    const pool = Storage.getAvailablePool(this.state.selectedCats);
+    const pool = Storage.getAvailablePool(this.state.selectedCats, this.state.difficulty);
 
     if (pool.length === 0) {
-      alert('所选类别已无可用词，请重置词库或选择其他类别。');
+      alert('所选类别在该难度下已无可用词，请重置词库或选择其他类别/难度。');
       return;
     }
 
@@ -301,8 +311,8 @@ const Game = {
     if (!el) return;
     let total = 0, remaining = 0;
     Object.keys(WORD_BANK).forEach(k => {
-      total += Storage.getTotalCount(k);
-      remaining += Storage.getRemainingCount(k);
+      total += Storage.getTotalCount(k, 'all');
+      remaining += Storage.getRemainingCount(k, 'all');
     });
     el.textContent = `词库: ${remaining}/${total}`;
   },

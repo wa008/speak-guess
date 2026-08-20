@@ -1,25 +1,7 @@
-// storage.js — localStorage 封装，管理已用词去重
-const Storage = {
-  KEY_PREFIX: 'speak-guess-used-',
+with open('/Users/benson/code/jiacheclub/speak-guess/js/storage.js', 'r') as f:
+    content = f.read()
 
-  getUsedWords(category) {
-    try {
-      const data = localStorage.getItem(this.KEY_PREFIX + category);
-      return data ? JSON.parse(data) : [];
-    } catch {
-      return [];
-    }
-  },
-
-  markWordUsed(category, word) {
-    const used = this.getUsedWords(category);
-    if (!used.includes(word)) {
-      used.push(word);
-      localStorage.setItem(this.KEY_PREFIX + category, JSON.stringify(used));
-    }
-  },
-
-
+new_methods = """
   getAllWords(category, difficulty = 'all') {
     const catData = WORD_BANK[category];
     if (!catData) return [];
@@ -44,23 +26,21 @@ const Storage = {
   getTotalCount(category, difficulty = 'all') {
     return this.getAllWords(category, difficulty).length;
   },
+"""
 
+import re
+content = re.sub(r'  getRemainingWords\(category\).*?getTotalCount\(category\) \{.*?\},', new_methods, content, flags=re.DOTALL)
 
-  resetCategory(category) {
-    localStorage.removeItem(this.KEY_PREFIX + category);
-  },
-
-  resetAll() {
-    Object.keys(WORD_BANK).forEach(cat => this.resetCategory(cat));
-  },
-
-  // 从多个类别中获取可用词池（已去重）
-  getAvailablePool(categories, difficulty = 'all') {
+content = content.replace(
+"""  getAvailablePool(categories) {
     const pool = [];
     categories.forEach(cat => {
-      const remaining = this.getRemainingWords(cat, difficulty);
-      remaining.forEach(word => pool.push({ word, category: cat }));
-    });
-    return pool;
-  }
-};
+      const remaining = this.getRemainingWords(cat);""",
+"""  getAvailablePool(categories, difficulty = 'all') {
+    const pool = [];
+    categories.forEach(cat => {
+      const remaining = this.getRemainingWords(cat, difficulty);"""
+)
+
+with open('/Users/benson/code/jiacheclub/speak-guess/js/storage.js', 'w') as f:
+    f.write(content)
